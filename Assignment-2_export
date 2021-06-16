@@ -1,0 +1,176 @@
+# To add a new cell, type '# %%'
+# To add a new markdown cell, type '# %% [markdown]'
+# %% [markdown]
+# # Question 1
+# %% [markdown]
+# ### a-	Store the second column of the file by eliminating the header into a variable and print its mean and its standard deviation. Provide a screenshot showing the execution.[4 marks]
+
+# %%
+import pandas as pd
+import numpy as np
+import seaborn as sns
+from scipy.stats import skew
+from sklearn import preprocessing
+df = pd.read_csv('/Users/mischafubler/Dropbox/Mischa/Bermuda 2021/EIT Big Data for Utilities/Assignment 2 Resources/iris.csv')
+print(df)
+
+# %% [markdown]
+# ### b-	Normalize the list obtained in a- by subtracting the mean and dividing by the standard deviation. Provide a screenshot showing the execution. [4 marks]
+
+# %%
+sep_width = df['sepal.width']
+print('Sepal Width mean:',sep_width.mean())
+print('Sepal Width Std Dev.:.', sep_width.std())
+#nomalize the dataset
+norm = (sep_width - sep_width.mean()) / sep_width.std()
+print (norm)
+
+# %% [markdown]
+# ### c.	Plot the data obtained in a
+
+# %%
+sep_width.plot.hist()
+
+# %% [markdown]
+# ### d.	Create a normal distribution having the mean and the standard deviation of the data obtained in b
+
+# %%
+# normal distribution having the mean and standard deviation of the data
+# imported seaborn and sklearn's preprocessing moduel in 1st cell
+# sns.displot(norm, kind='histe')
+sns.histplot(preprocessing.scale(sep_width), kde=True, fill=False)
+skew(sep_width)
+
+# %% [markdown]
+# ### e.	By analyzing the normal distribution obtained in d-, what do you notice?
+# The data set has a right skew. More of the values are lower than the mean. We might gain more insights if we eliminated some of the outliers. i.e. observations ± 2 standard deviations
+# 
+# %% [markdown]
+# # Question 2
+# In this exercise you are required to use scikit-learn to compare different machine learning algorithms applied on the iris dataset. 
+# Load the iris dataset and split the data into training and test data with a test_size of 0.4.
+# 
+
+# %%
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+
+# load data, assign obeservations to X and classifations to Y
+data = load_iris()
+X = data.data
+Y = data.target
+
+X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size=0.4, random_state=3)
+
+# %% [markdown]
+# ### a-	Implement a Multi-Layer Perceptron classifier with one hidden layer containing 50 neurons. Train it on the training data and test it on the test data. Provide a screenshot showing the obtained score. [6 marks] 
+
+# %%
+# using lbfgs solver as it's more efficient on smaller datasets...according to documentation
+classify = MLPClassifier(solver='lbfgs', hidden_layer_sizes=50)
+
+# Train classifier
+classify.fit(X_train, Y_train)
+
+# Predictions
+predictions = classify.predict(X_test)
+
+print(metrics.accuracy_score(Y_test,predictions))
+
+# Check Predictions
+print("Sample:", X_test[48],"\nTarget:",Y_test[48], "\nPrediction:",classify.predict(X_test)[48])
+print(predictions)
+
+# %% [markdown]
+# ### b-	Implement a Decision Tree classifier. Train it on the training data and test it on the test data. Provide a screenshot showing the obtained score. [6 marks]
+
+# %%
+from matplotlib import pyplot as plt
+from sklearn import tree
+DT_classifier = DecisionTreeClassifier(random_state=0)
+DT_classifier.fit(X_train,Y_train)
+DT_predictions = DT_classifier.predict(X_test)
+
+print(metrics.accuracy_score(Y_test,DT_predictions))
+print(DT_predictions)
+tree.plot_tree(DT_classifier)
+plt.show()
+
+# %% [markdown]
+# ### c-	Implement a 5-NN (5-Nearest Neighbors) classifier. Train it on the training data and test it on the test data. Provide a screenshot showing the obtained score. [6 marks]
+
+# %%
+Knn_classifier = KNeighborsClassifier(n_neighbors=5)
+Knn_classifier.fit(X_train,Y_train)
+Knn_predictions = Knn_classifier.predict(X_test)
+
+print(metrics.accuracy_score(Y_test, Knn_predictions))
+print(Knn_predictions)
+
+# %% [markdown]
+# ### d-	Comment on the results. [2 marks]
+# MultiLevel Perceptron and Decision Tree Classifier algorithms resulted in the same level of accuracy (95%) while K-Nearest Neighbours had only 93% accuracy. I imagine the scores would not be so similar if the data set was larger or the thing being observed wasn’t as consistent. 
+# %% [markdown]
+# # Question 4
+# The following code lets you load the boston dataset from scikit-learn framework and creates a train/test split.
+# 
+# from sklearn.datasets import load_boston<br/>
+# from sklearn.model_selection import train_test_split
+# 
+# boston = load_boston()
+# 
+# X = boston.data<br/>
+# y = boston.target<br/>
+# X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.1,
+#                                                 random_state=5)<br/>
+# 
+# a-	Complete the code above in order to provide the score of an MLPRegressor when trained on X_train,y_train and tested on the same. Provide a screenshot showing the correct execution and the obtained results. [3 marks]<br/>
+# b-	Complete the code above in order to provide the score of an MLPRegressor when trained on X_train,y_train and tested on the X_test,y_test. Provide a screenshot showing the correct execution and the obtained results. [3 marks]<br/>
+# c-	Comment on the results. [4 marks]
+# 
+# %% [markdown]
+# ### a-	Complete the code above in order to provide the score of an MLPRegressor when trained on X_train,y_train and tested on the same. Provide a screenshot showing the correct execution and the obtained results. [3 marks]<br/>
+# 
+
+# %%
+from sklearn.datasets import load_boston
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
+
+boston = load_boston()
+X = boston.data
+y = boston.target
+
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.1, random_state=5)
+
+regressor = MLPRegressor(random_state=3, max_iter=650).fit(X_train,y_train)
+regressor.predict(X_train)
+regressor.score(X_train,y_train)
+
+# %% [markdown]
+# ### b-	Complete the code above in order to provide the score of an MLPRegressor when trained on X_train,y_train and tested on the X_test,y_test. Provide a screenshot showing the correct execution and the obtained results. [3 marks]<br/>
+
+# %%
+from sklearn.datasets import load_boston
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
+
+boston = load_boston()
+X = boston.data
+y = boston.target
+
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.1, random_state=5)
+
+regressor = MLPRegressor(random_state=3, max_iter=650).fit(X_train,y_train)
+regressor.predict(X_test)
+regressor.score(X_test,y_test)
+
+# %% [markdown]
+# ### c-	Comment on the results. [4 marks]
+# 
+# It's interesting that the score was lower when testing against the training data. How is that the case? 
+
