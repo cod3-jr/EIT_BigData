@@ -173,4 +173,32 @@ regressor.score(X_test,y_test)
 # ### c-	Comment on the results. [4 marks]
 # 
 # It's interesting that the score was lower when testing against the training data. How is that the case? 
+# %% [markdown]
+# # Question 6
+# Follow the instructions available on https://www.nltk.org/install.html to install NLTK platform on your computer. 
+# 
+# a-	Create a python program that uses NLTK to tokenize the sentence “Hi, my name is YOURNAME. This is my first program using NLTK”. Provide a screenshot showing the execution of the program. [5 marks]
+# 
+# b-	 Update your program to generate the Part-Of-Speech tags of the tokens in the sentence. Provide a screenshot showing the execution of the program. [5 marks]
+# 
+# ### a-	Create a python program that uses NLTK to tokenize the sentence “Hi, my name is YOURNAME. This is my first program using NLTK”. Provide a screenshot showing the execution of the program.
+
+# %%
+import nltk
+
+my_str = "Hi, my name is Mischa. This is my first program using NLTK"
+
+nltk.word_tokenize(my_str)
+
+# %% [markdown]
+# ### b- Update your program to generate the Part-Of-Speech tags of the tokens in the sentence. Provide a screenshot showing the execution of the program.
+
+# %%
+import nltk
+
+my_str = "Hi, my name is Mischa. This is my first program using NLTK"
+
+tokenized = nltk.word_tokenize(my_str)
+tags = nltk.pos_tag(tokenized)
+
 
